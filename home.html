@@ -194,9 +194,7 @@
     function pass(){
         const get=document.getElementById("pdl").value
         if (get=="1212"){
-       import { firebaseConfig } from './firebaseConfig.js';
-firebase.initializeApp(firebaseConfig);
-
+       
         
 
         document.getElementById("storeli").style.display='block'
@@ -207,6 +205,8 @@ firebase.initializeApp(firebaseConfig);
 <script>
   // Firebase config
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { firebaseConfig } from './firebaseConfig.js';
+firebase.initializeApp(firebaseConfig);
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
