@@ -194,7 +194,9 @@
     function pass(){
         const get=document.getElementById("pdl").value
         if (get=="1212"){
-       
+       import { firebaseConfig } from './firebaseConfig.js';
+firebase.initializeApp(firebaseConfig);
+
         
 
         document.getElementById("storeli").style.display='block'
@@ -384,4 +386,5 @@
 </script>
 </body>
 </html>
+
 
