@@ -1,1 +1,10 @@
-
+const firebaseConfig = {
+  apiKey: "AIzaSyAsRVAyhIrF5CwhHMxRTg9eMPJ9boJZsOg",
+  authDomain: "userloginapp-74046.firebaseapp.com",
+  databaseURL: "https://userloginapp-74046-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "userloginapp-74046",
+  storageBucket: "userloginapp-74046.firebasestorage.app",
+  messagingSenderId: "622772168318",
+  appId: "1:622772168318:web:ffa0b21725a956821a9a2f",
+  measurementId: "G-M89B0XMQM8"
+};
