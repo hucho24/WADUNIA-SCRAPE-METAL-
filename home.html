@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Buying List App</title>
+  <style>
+    body { font-family: Arial; margin:20px; }
+    .hidden { display:none; }
+    .card { border:1px solid #ccc; padding:10px; margin:10px 0; border-radius:5px; }
+    input[type=number], input[type=text] { width:80px; }
+    .authSection{
+        background-color: bisque;border: 2px solid red;
+        width: 300px;
+        height: 450px;
+        border-radius: 20px;
+        margin: 10% 24%;
+        align-items: center;
+        
+    }
+    .buy{width: 100%;
+        height: 100vh;
+        background-color: white;
+        
+        display: none;
+        overflow: auto;
+
+    }
+    .storerecord{
+        width: 100%;
+        height: 100svh;
+        background-color: white;
+    }
+    .btn{
+        color: blue;
+        width: 50px;
+        
+        border-radius: 4px;
+        
+    }
+.menu{
+    background-color: black;
+    width: 15%;
+    height: 100vh;
+    margin:4% -15%;
+    position: fixed;
+    animation: left 2s;
+    transition: margin-left 0.5s ease; 
+    
+}
+.storeli{
+    margin: -11% 18%;
+    background-color: red;
+    position: fixed;
+    width: 90%;
+    height: 90vh;
+    overflow: auto;
+    display: none;
+}
+.home{
+    position: fixed;
+    width: 100%;
+    height: 10vh;
+    margin: -1% -1%;
+    background-color: red;
+    border-radius: 10px;
+    
+}
+.storeopen{
+    position: fixed;
+    background-color: silver;
+    width: 110%;
+    height: 110vh;
+    display:none;
+    margin: -15% -6%;
+    align-content: center;
+    align-items: center;
+}
+.label{
+    position: fixed;
+    background-color: yellow;
+    margin:-14% 13%;
+    width: 80%;
+    height: 30vh;
+}
+  </style>
+
+  <script src="app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  
+</head>
+<body style="background-image:url(scrap-america.jpg);background-size: cover;">
+
+
+<!-- Authentication -->
+<div id="authSection" class="authSection">
+    <label ><h1> WADUNIA LOG IN</h1></label>
+    <label><h6>scrape metal</h6></label>
+  <h3 class="signIn">Sign Up</h3>
+  <input id="signupEmail" type="email" placeholder="Email"><br>
+  <input id="signupPass" type="password" placeholder="Password"><br>
+  <button onclick="signUp()">Create Account</button>
+
+  <h3>Sign In</h3>
+  <input id="loginEmail" type="email" placeholder="Email"><br>
+  <input id="loginPass" type="password" placeholder="Password"><br>
+  <button onclick="signIn()">Login</button>
+</div>
+
+<!-- Main App -->
+<div id="appSection" class="hidden">
+    <div class="home" id="home">HOME
+        <button onclick="btn()" class="btn">
+            MENU
+        </div>
+        
+       
+        <br>
+        <div class="menu" id="menu">
+             <button onclick="home()"  style="background-color: blue;border-radius: 12px;width: 90px; height: 5vh;">home</button>
+        
+            <button onclick="buyingli()" style="background-color: blue;border-radius: 12px; width: 90px; height: 5vh;">buying</button>
+            <button onclick="storeli()"  style="background-color: blue;border-radius: 12px;width: 90px; height: 5vh;">store record</button>
+        </div>
+        
+        </P><br><br>
+    <div class="buy" id="buying">
+  <button onclick="logout()">Logout</button>
+  <div class="label">
+  <h3 >Buying List</h3 >
+
+  <label>Seller Name: <input id="seller"></label><br><br>
+  <label>Item:
+    <select id="item" onchange="autoFillPrice()">
+      <option value="">--Select Item--</option>
+      <option value="plastic">Plastic</option>
+      <option value="corton">Corton</option>
+      <option value="white">White</option>
+      <option value="plastic32">"plastic32</option>
+      <option value="lite">lite</option>
+      <option value="quencher">quencher</option>
+      <option value="quencher25">quencher25</option>
+      <option value="heavy">heavy</option>
+      <option value="pro">pro</option>
+         <option value="kinus">kinus</option>
+      <option value="hard">hard</option>
+      <option value="soft">soft</option>
+      <option value="zinc">zinc</option>
+      <option value="ld">ld</option>
+      <option value="bones">bones</option>
+         <option value="sole">sole</option>
+      <option value="maziwa">maziwa</option>
+      <option value="vunjika">vunjika</option>
+      <option value="chupa">chupa</option>
+      <option value="gunia">gunia</option>
+      
+    </select>
+  </label>
+  
+  <input id="qty" type="number" placeholder="Qty">
+  <input id="price" type="number" placeholder="Price" readonly>
+  <button onclick="addItem()">Save Item</button>
+</div>
+  <div id="buyingList"></div>
+  <h4>Total Spend: <span id="totalSpend">0</span> sh</h4>
+  <div class="card">
+    <h4>Item Summary</h4>
+    <div id="itemSummary"></div>
+  </div>
+
+  <button onclick="sendToStore()">Send To Store Record</button>
+    </div>
+     <button onclick="home()">back</button>
+       </div>
+       
+    <div class="storeopen" id="storeopen">
+       OPEN STORE ENTER PASSWORD TO CONFIRM <input type="password" id="pdl">enter password
+         
+        <button onclick="pass()">open</button>
+          <button onclick="homecd()">back</button>
+    </div>
+    <div class="storeli" id="storeli">
+  <h3>Store Record</h3>
+  <button onclick="deleteAllStore()">Delete All Store Records</button>
+  <div id="storeRecord"></div>
+  <button onclick="home()">back</button>
+</div>
+</div>
+
+
+</div>
+</div>
+<script>
+    function pass(){
+        const get=document.getElementById("pdl").value
+        if (get=="1212"){
+       
+        
+
+        document.getElementById("storeli").style.display='block'
+        document.getElementById("storeopen").style.display='none';
+        
+    }}
+</script>
+<script>
+  // Firebase config
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAsRVAyhIrF5CwhHMxRTg9eMPJ9boJZsOg",
+  authDomain: "userloginapp-74046.firebaseapp.com",
+  databaseURL: "https://userloginapp-74046-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "userloginapp-74046",
+  storageBucket: "userloginapp-74046.firebasestorage.app",
+  messagingSenderId: "622772168318",
+  appId: "1:622772168318:web:ffa0b21725a956821a9a2f",
+  measurementId: "G-M89B0XMQM8"
+};
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+  let currentUser = null;
+
+  // Auto price
+  function autoFillPrice() {
+    const item = document.getElementById("item").value;
+    let price = 0;
+    if(item==="plastic") price=30;
+    else if(item==="corton") price=10;
+    else if(item==="white") price=20;
+    else if(item==="plastic32") price=32;
+    else if(item==="lite") price=30;
+    else if(item==="quencher") price=20;
+    else if(item==="quencher") price=25;
+    else if(item==="heavy") price=50;
+    else if(item==="pro") price=400;
+    else if(item==="kinus") price=700;
+    else if(item==="hard") price=100;
+    else if(item==="soft") price=150;
+    else if(item==="zinc") price=50;
+     else if(item==="ld") price=15;
+      else if(item==="bones") price=10;
+       else if(item==="sole") price=10;
+        else if(item==="maziwa") price=10;
+         else if(item==="vunjika") price=3;
+          else if(item==="chupa") price=1;
+           else if(item==="gunia") price=3;
+
+     
+    
+
+    document.getElementById("price").value = price;
+  }
+
+  // Authentication
+  function signUp() {
+    const email = document.getElementById("signupEmail").value;
+    const pass = document.getElementById("signupPass").value;
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(()=>alert("Account created!"))
+      .catch(e=>alert(e.message));
+  }
+  function signIn() {
+    const email = document.getElementById("loginEmail").value;
+    const pass = document.getElementById("loginPass").value;
+    auth.signInWithEmailAndPassword(email, pass)
+      .catch(e=>alert(e.message));
+  }
+  function logout() { auth.signOut(); }
+
+  auth.onAuthStateChanged(user=>{
+    if(user){
+      currentUser = user;
+      document.getElementById("authSection").classList.add("hidden");
+      document.getElementById("appSection").classList.remove("hidden");
+      loadData();
+    } else {
+      currentUser = null;
+      document.getElementById("authSection").classList.remove("hidden");
+      document.getElementById("appSection").classList.add("hidden");
+    }
+  });
+
+  // Add item
+  function addItem() {
+    if(!currentUser) return;
+    const seller = document.getElementById("seller").value.trim();
+    const item = document.getElementById("item").value;
+    const qty = parseInt(document.getElementById("qty").value);
+    const price = parseInt(document.getElementById("price").value);
+    if(!seller || !item || !qty || !price) { alert("Fill all fields"); return; }
+    const total = qty*price;
+    db.ref("users/"+currentUser.uid+"/buyingList/"+seller).push({item, qty, price, total});
+   document.getElementById("qty").value="" 
+  }
+
+  // Edit item
+  function editItem(seller,key,field,value){
+    if(!currentUser) return;
+    const ref = db.ref("users/"+currentUser.uid+"/buyingList/"+seller+"/"+key);
+    ref.once("value",snap=>{
+      let data = snap.val();
+      if(field==='qty' || field==='price') value = parseInt(value);
+      data[field] = value;
+      if(data.qty && data.price) data.total = data.qty*data.price;
+      ref.set(data);
+    });
+  }
+
+  // Delete
+  function deleteItem(seller,key){ if(confirm("Delete this item?")) db.ref("users/"+currentUser.uid+"/buyingList/"+seller+"/"+key).remove(); }
+  function deleteSeller(seller){ if(confirm("Delete this seller?")) db.ref("users/"+currentUser.uid+"/buyingList/"+seller).remove(); }
+
+  // Send to store record (keep sellers intact)
+  function sendToStore(){
+    db.ref("users/"+currentUser.uid+"/buyingList").once("value",snap=>{
+      if(!snap.exists()) return alert("No data to send!");
+      const buyingListData = snap.val(); // keep full seller/item structure
+      db.ref("users/"+currentUser.uid+"/storeRecord").push({
+        date: new Date().toLocaleString(),
+        sellers: buyingListData
+      });
+      db.ref("users/"+currentUser.uid+"/buyingList").remove();
+    });
+  }
+
+  function deleteStoreRecord(key){ if(confirm("Delete this store record?")) db.ref("users/"+currentUser.uid+"/storeRecord/"+key).remove(); }
+  function deleteAllStore(){ if(confirm("Delete all store records?")) db.ref("users/"+currentUser.uid+"/storeRecord").remove(); }
+
+  // Load data
+  function loadData(){
+    db.ref("users/"+currentUser.uid+"/buyingList").on("value",snap=>{
+      renderBuyingList(snap.val()||{});
+    });
+    db.ref("users/"+currentUser.uid+"/storeRecord").on("value",snap=>{
+      renderStoreRecord(snap.val()||{});
+    });
+  }
+
+  // Render Buying List
+  function renderBuyingList(data){
+    const container = document.getElementById("buyingList"); container.innerHTML="";
+    let grandTotal=0;
+    const summary={};
+
+    for(let seller in data){
+      const div = document.createElement("div"); div.className="card";
+      let sellerTotal=0;
+      div.innerHTML=`<h4>${seller} <button onclick="deleteSeller('${seller}')">Delete Seller</button></h4>`;
+      for(let key in data[seller]){
+        let {item,qty,price,total} = data[seller][key];
+        sellerTotal += total;
+        grandTotal += total;
+
+        div.innerHTML+=`Item: <input type="text" value="${item}" onchange="editItem('${seller}','${key}','item',this.value)">
+                        Qty: <input type="number" value="${qty}" onchange="editItem('${seller}','${key}','qty',this.value)">
+                        Price: <input type="number" value="${price}" onchange="editItem('${seller}','${key}','price',this.value)">
+                        Total: ${total} sh
+                        <button onclick="deleteItem('${seller}','${key}')">Delete</button><br>`;
+
+        summary[item] = summary[item]||{qty:0,amount:0};
+        summary[item].qty += qty;
+        summary[item].amount += total;
+      }
+      div.innerHTML+=`<strong>Seller Total: ${sellerTotal} sh</strong>`;
+      container.appendChild(div);
+    }
+
+    document.getElementById("totalSpend").innerText = grandTotal;
+
+    const sumDiv = document.getElementById("itemSummary"); sumDiv.innerHTML="";
+    for(let it in summary){
+      sumDiv.innerHTML+=`${it}: Qty ${summary[it].qty}, Amount ${summary[it].amount} sh<br>`;
+    }
+  }
+
+  // Render Store Record
+  function renderStoreRecord(data){
+    const container = document.getElementById("storeRecord"); container.innerHTML="";
+    for(let key in data){
+      const record = data[key];
+      const div = document.createElement("div"); div.className="card";
+      div.innerHTML=`<h4>Sent on: ${record.date} <button onclick="deleteStoreRecord('${key}')">Delete</button></h4>`;
+      for(let seller in record.sellers){
+        div.innerHTML += `<h5>Seller: ${seller}</h5>`;
+        for(let itemKey in record.sellers[seller]){
+          const {item, qty, price, total} = record.sellers[seller][itemKey];
+          div.innerHTML += `Item: ${item}, Qty: ${qty}, Price: ${price}, Total: ${total} sh<br>`;
+        }
+      }
+      container.appendChild(div);
+    }
+  }
+</script>
+</body>
+</html>
